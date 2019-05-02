@@ -46,11 +46,8 @@ class Pinger
     addrinfo.first?.try(&.ip_address)
   end
 
-  protected def run_ping(ip, count, timeout)
-    host = strip_port(ip.to_s)
+  protected def run_ping(host, count, timeout)
     args = pargs(host, count, timeout)
-
-    args.unshift("-6") if ip.family == Socket::Family::INET6
 
     start_time = Time.utc
     exit_status, info, err = run_ping_process(args)
@@ -103,7 +100,7 @@ class Pinger
     error = IO::Memory.new
 
     status = Process.run(
-      "ping",
+      args.shift,
       args: args,
       output: output,
       error: error,
@@ -113,22 +110,38 @@ class Pinger
   end
 
   # Get process arguments for ping
-  protected def pargs(host : String, count : Int32, timeout : Int32) : Array(String)
+  protected def pargs(ip, count : Int32, timeout : Int32) : Array(String)
+    host = strip_port(ip.to_s)
+    ipv6 = ip.family == Socket::Family::INET6
+    process = if ipv6
+                # Removes the square brackets. i.e. [::1]:9
+                host = host[1..-2]
+                "ping6"
+              else
+                "ping"
+              end
+
+    # https://en.wikipedia.org/wiki/Uname
     case OS
-    when /linux/
-      ["-c", count.to_s, "-W", timeout.to_s, host]
+    when /linux|gnu/
+      [process, "-c", count.to_s, "-W", timeout.to_s, host]
     when /aix/
-      ["-c", count.to_s, "-w", timeout.to_s, host]
-    when /bsd|osx|mach|darwin/
-      ["-c", count.to_s, "-t", timeout.to_s, host]
-    when /solaris|sunos/
-      [host, timeout.to_s]
-    when /hpux/i
-      [host, "-n#{count.to_s}", "-m", timeout.to_s]
-    when /win32|windows|msdos|mswin|cygwin|mingw/i
-      ["-n", count.to_s, "-w", (timeout * 1000).to_s, host]
+      [process, "-c", count.to_s, "-w", timeout.to_s, host]
+    when /bsd|darwin|dragonfly/
+      # FreeBSD + MidnightBSD + OpenBSD + NetBSD etc
+      if ipv6
+        [process, "-c", count.to_s, host]
+      else
+        [process, "-c", count.to_s, "-t", timeout.to_s, host]
+      end
+    when /sunos/
+      [process, host, timeout.to_s]
+    when "hp-ux"
+      [process, host, "-n#{count.to_s}", "-m", timeout.to_s]
+    when /cygwin|mingw|msys/
+      [process, "-n", count.to_s, "-w", (timeout * 1000).to_s, host]
     else
-      [host]
+      [process, host]
     end
   end
 end
