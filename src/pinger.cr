@@ -11,7 +11,7 @@ class Pinger
   @warning : String?
   @exception : String?
 
-  # Duration of ping request in seconds
+  # Duration of ping request in milliseconds
   @duration : Int32?
 
   # Whether host was reachable through ICMP
@@ -43,21 +43,21 @@ class Pinger
       protocol: Socket::Protocol::UDP,
     )
 
-    ip = addrinfo.first?.try(&.ip_address)
+    addrinfo.first?.try(&.ip_address)
   end
 
   protected def run_ping(ip, count, timeout)
-    start_time = Time.utc
-
-    args = pargs(ip.to_s, count, timeout)
+    host = strip_port(ip.to_s)
+    args = pargs(host, count, timeout)
 
     args.unshift("-6") if ip.family == Socket::Family::INET6
 
+    start_time = Time.utc
     exit_status, info, err = run_ping_process(args)
 
     success = read_status(exit_status, info, err)
 
-    @duration = (Time.utc - start_time).seconds if success
+    @duration = (Time.utc - start_time).milliseconds if success
     @pingable = success
 
     success
@@ -92,6 +92,10 @@ class Pinger
 
       false # An error occurred
     end
+  end
+
+  protected def strip_port(host)
+    host.rstrip(":7")
   end
 
   protected def run_ping_process(args)
