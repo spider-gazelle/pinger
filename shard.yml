@@ -1,0 +1,13 @@
+name: pinger
+version: 0.1.0
+
+authors:
+  - Caspian Baska <caspianbaska@gmail.com>
+
+development_dependencies:
+  ameba:
+    github: veelenga/ameba
+
+crystal: 0.28.0
+
+license: MIT
