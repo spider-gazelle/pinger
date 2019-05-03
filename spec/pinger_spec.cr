@@ -12,7 +12,7 @@ describe Pinger do
     pinger.duration.try(&.should be > 0)
   end
 
-  it "should ping IPv6" do
+  travis_guard "should ping IPv6" do
     pinger = Pinger.new("::1")
     result = pinger.ping
 
