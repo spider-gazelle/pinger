@@ -48,4 +48,5 @@ puts {
 
 ## Contributors
 
-- [Caspian Baska](https://github.com/caspiano) - creator and maintainer
+- [Caspian Baska](https://github.com/caspiano)
+- [Stephen von Takach](https://github.com/stakach)
