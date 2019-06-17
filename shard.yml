@@ -1,5 +1,5 @@
 name: pinger
-version: 0.1.1
+version: 1.0.0
 
 authors:
   - Caspian Baska <caspianbaska@gmail.com>
@@ -7,7 +7,5 @@ authors:
 development_dependencies:
   ameba:
     github: veelenga/ameba
-
-crystal: 0.28.0
 
 license: MIT
