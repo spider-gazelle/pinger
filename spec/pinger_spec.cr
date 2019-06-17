@@ -22,7 +22,7 @@ describe Pinger do
   end
 
   it "should raise error on bang method failure" do
-    expect_raises(Pinger::Error) { Pinger.new("127.0.0.2").ping! }
+    expect_raises(Pinger::Error) { Pinger.new("192.0.0.2").ping! }
   end
 
   travis_guard "should ping IPv6" do
