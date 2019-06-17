@@ -25,7 +25,7 @@ require "pinger"
 hostname = "www.duckduckgo.com"
 pinger = Pinger.new(hostname, count: 3)
 
-pinger.ping
+pinger.ping # => true / false
 puts {
     host: pinger.ip,
     pingable: pinger.pingable,
@@ -33,6 +33,20 @@ puts {
     exception: pinger.exception
 }
 ```
+
+Or if you would like an error raised
+
+```crystal
+
+require "pinger"
+
+hostname = "www.doesnotexist.com"
+pinger = Pinger.new(hostname, count: 3)
+
+pinger.ping! # => self / raise pinger.exception
+
+```
+
 
 ## Todo
 

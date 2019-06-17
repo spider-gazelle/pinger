@@ -1,6 +1,14 @@
 require "socket"
 
 class Pinger
+  class Error < Exception
+    def initialize(message, @pinger : Pinger)
+      super(message)
+    end
+
+    getter pinger
+  end
+
   VERSION = "0.1.0"
 
   # Host OS
@@ -33,6 +41,14 @@ class Pinger
     end
 
     run_ping(ip, @count, @timeout)
+  end
+
+  def ping!
+    if !self.ping
+      message = @exception || @warning || "unknown error"
+      raise Error.new(message, self)
+    end
+    self
   end
 
   protected def resolve_host(host)
