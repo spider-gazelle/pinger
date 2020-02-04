@@ -12,7 +12,11 @@ class Pinger
   VERSION = "0.1.0"
 
   # Host OS
-  OS = `uname`.strip.downcase
+  {% if env("UNAME_AT_COMPILE_TIME") %}
+    OS = {{ system("uname").stringify.strip.downcase }}
+  {% else %}
+    OS = `uname`.strip.downcase
+  {% end %}
 
   @ip : Socket::IPAddress?
 
