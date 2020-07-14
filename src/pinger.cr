@@ -9,13 +9,13 @@ class Pinger
     getter pinger
   end
 
-  VERSION = "0.1.0"
+  VERSION = {{ system(%(shards version "#{__DIR__}")).chomp.stringify.downcase }}
 
   # Host OS
-  {% if env("UNAME_AT_COMPILE_TIME") %}
-    OS = {{ system("uname").stringify.strip.downcase }}
-  {% else %}
+  {% if env("UNAME_AT_RUN_TIME") %}
     OS = `uname`.strip.downcase
+  {% else %}
+    OS = {{ system("uname").stringify.strip.downcase }}
   {% end %}
 
   @ip : Socket::IPAddress?
