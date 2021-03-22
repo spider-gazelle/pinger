@@ -157,7 +157,7 @@ class Pinger
     when /sunos/
       [process, host, timeout.to_s]
     when "hp-ux"
-      [process, host, "-n#{count.to_s}", "-m", timeout.to_s]
+      [process, host, "-n#{count}", "-m", timeout.to_s]
     when /cygwin|mingw|msys/
       [process, "-n", count.to_s, "-w", (timeout * 1000).to_s, host]
     else
