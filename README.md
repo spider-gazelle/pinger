@@ -1,6 +1,6 @@
 # pinger
 
-[![Build Status](https://travis-ci.org/spider-gazelle/pinger.svg?branch=master)](https://travis-ci.org/spider-gazelle/pinger) [![Crystal Version](https://img.shields.io/badge/crystal%20-0.28.0-brightgreen.svg)](https://crystal-lang.org/api/0.28.0/)
+[![CI](https://github.com/spider-gazelle/pinger/actions/workflows/ci.yml/badge.svg)](https://github.com/spider-gazelle/pinger/actions/workflows/ci.yml)
 
 Microlib to generate ICMP ping requests.  
 Avoids sudo requirement of using raw sockets by shelling out to `ping` and thus pinger has an implicit dependency of `ping`.
