@@ -26,6 +26,8 @@ describe Pinger do
   end
 
   travis_guard "should ping IPv6" do
+    pending!("IPv6 not supported") if ENV["CI"]?
+
     pinger = Pinger.new("::1")
     result = pinger.ping
 
