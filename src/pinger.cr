@@ -95,6 +95,9 @@ class Pinger
       @exception = err.chomp if err
 
       false # Transmission successful, no response.
+    when 256
+      @exception = "timed out"
+      false
     else
       if err
         @exception = err.chomp
