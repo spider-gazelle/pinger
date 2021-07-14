@@ -1,28 +1,33 @@
 name: CI
 on:
   push:
-  workflow_dispatch:
   schedule:
     - cron: "0 6 * * 1"
 jobs:
-  build:
+  style:
+    runs-on: ubuntu-latest
+    container: crystallang/crystal:latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Format
+        run: crystal tool format --check
+      - name: Lint
+        uses: crystal-ameba/github-action@v0.2.12
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         crystal:
-          - latest
           - nightly
           - 1.0.0
-    runs-on: ${{ matrix.os }}
     container: crystallang/crystal:${{ matrix.crystal }}-alpine
     steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: shards install --ignore-crystal-version
-    - name: Lint
-      run: ./bin/ameba
-    - name: Format
-      run: crystal tool format --check
-    - name: Run tests
-      run: crystal spec -v --error-trace
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: shards install --ignore-crystal-version
+      - name: Run tests
+        run: crystal spec -v --error-trace
