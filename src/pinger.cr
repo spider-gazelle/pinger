@@ -24,7 +24,7 @@ class Pinger
   @exception : String?
 
   # Duration of ping request in milliseconds
-  @duration : Int32?
+  @duration : Float32?
 
   # Whether host was reachable through ICMP
   @pingable : Bool?
@@ -74,7 +74,18 @@ class Pinger
 
     success = read_status(exit_status, info, err)
 
-    @duration = (Time.utc - start_time).milliseconds if success
+    if success && info.includes? "time="
+      index_time = info.index "time="
+      index_ms = info.index "ms"
+      case OS
+      when /linux|gnu|bsd|darwin|dragonfly/
+        @duration = info[index_time+5..index_ms-2].to_f32 if index_time && index_ms
+      when /cygwin|mingw|msys/
+        @duration = info[index_time+5..index_ms-1].to_f32 if index_time && index_ms
+      end
+    end
+    @duration = (Time.utc - start_time).milliseconds.to_f32 if success unless @duration
+
     @pingable = success
 
     success
